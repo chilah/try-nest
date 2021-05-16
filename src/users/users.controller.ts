@@ -8,6 +8,7 @@ export class UsersController {
 
   @Get('/me')
   create(@Body() creatUsers: IUser): IUser {
+    // test
     return this.usersService.create(creatUsers);
   }
 }
