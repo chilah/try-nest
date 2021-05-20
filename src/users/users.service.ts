@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, BadRequestException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { IUser } from './interfaces/users.interface';
 import { Users } from './users.entity';
@@ -10,14 +10,20 @@ export class UsersService {
     private usersRepository: Repository<Users>,
   ) {}
 
-  async create(value: IUser): Promise<IUser> {
-    const user = new Users();
+  async create(dto: IUser): Promise<IUser> {
+    const userExist = await this.usersRepository.findOne({
+      username: dto.username,
+    });
 
-    user.firstname = value.firstname;
-    user.lastname = value.lastname;
-    user.username = value.username;
-    user.password = value.password;
+    if (userExist) {
+      throw new BadRequestException('Unable to register');
+    }
 
-    return await this.usersRepository.save(user);
+    const userData = this.usersRepository.create(dto);
+    const user = await this.usersRepository.save(userData);
+
+    delete user.password;
+
+    return user;
   }
 }

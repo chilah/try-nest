@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { IUser } from './interfaces/users.interface';
 import { UsersService } from './users.service';
 
@@ -7,8 +7,9 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post('/register')
-  async create(@Body() creatUsers: IUser): Promise<IUser> {
-    // test
-    return await this.usersService.create(creatUsers);
+  async create(@Body() creatUser: IUser): Promise<IUser> {
+    const user = await this.usersService.create(creatUser);
+
+    return user;
   }
 }
